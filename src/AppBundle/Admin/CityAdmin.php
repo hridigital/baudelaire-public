@@ -46,7 +46,8 @@ class CityAdmin extends Admin
     {
         $formMapper
             ->add('term')
-            ->add('country', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
+	    #->add('country', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
+            ->add('country')
         ;
     }
 

@@ -4,8 +4,8 @@ Encore
     // the project directory where all compiled assets will be stored
     .setOutputPath('web/build/')
 
-    // the public path used by the web server to access the previous directory
-    .setPublicPath('/build')
+    // neccessary so it can write manifest.json
+    .setManifestKeyPrefix('build/')
 
     // will create web/build/app.js and web/build/app.css
     .addEntry('app', './assets/js/app.js')
@@ -27,6 +27,13 @@ Encore
     // create hashed filenames (e.g. app.abc123.css)
     // .enableVersioning()
 ;
+
+if (Encore.isProduction()) {
+    //Encore.setPublicPath('https://www.dhi.ac.uk/baudelaire/build')
+    Encore.setPublicPath('https://www.baudelairesong.org/search/build')
+} else {
+    Encore.setPublicPath('http://localhost/build')
+}
 
 // export the final configuration
 module.exports = Encore.getWebpackConfig();

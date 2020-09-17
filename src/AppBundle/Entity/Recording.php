@@ -200,8 +200,10 @@ class Recording
 	{
 		if ($this->recordingEarliest) {
 			return $this->title . ' (' . $this->recordingEarliest->format('Y') . ')';
-		} else {
+		} else if ($this->title) {
 			return $this->title;
+		} else {
+			return "not set";
 		}
 	}
 
@@ -211,10 +213,10 @@ class Recording
      * @param \AppBundle\Entity\Song $songs
      * @return Recording
      */
-    public function addSong(\AppBundle\Entity\Song $songs)
+    public function addSong(\AppBundle\Entity\Song $song)
     {
-        $this->songs[] = $songs;
-
+        $this->songs[] = $song;
+	$song->addRecording($this);
         return $this;
     }
 
@@ -223,9 +225,10 @@ class Recording
      *
      * @param \AppBundle\Entity\Song $songs
      */
-    public function removeSong(\AppBundle\Entity\Song $songs)
+    public function removeSong(\AppBundle\Entity\Song $song)
     {
-        $this->songs->removeElement($songs);
+        $this->songs->removeElement($song);
+        $song->removeRecording($this);
     }
 
     /**

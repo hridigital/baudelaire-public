@@ -46,7 +46,9 @@ class PublisherAdmin extends Admin
     {
         $formMapper
             ->add('term')
-            ->add('city', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
+	    #->add('city', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
+	    ->add('city')
+
         ;
     }
 

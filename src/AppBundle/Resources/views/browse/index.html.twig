@@ -1,81 +1,38 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Songs - {% endblock %}
+
 {% block body %}
-
-    <div class="container">
-
-    	        <div class="row">
-        	<div class="col-md-12">
-
-				<h1>Songs</h1>
-
-				<p class="pagecount-text">Showing {{ pagination.paginationData.firstItemNumber|number_format  }} to {{ pagination.paginationData.lastItemNumber|number_format  }} of {{ pagination.paginationData.totalCount|number_format }}</p>
-               
-				<table class="table">
-					<tr>
-					    <th>{{ knp_pagination_sortable(pagination, 'Id', 'id') }}</th>
-					    <th>Images</th>
-					    <th>{{ knp_pagination_sortable(pagination, 'Shelf Mark', 'shelfMark') }}</th>
-					    <th>{{ knp_pagination_sortable(pagination, 'Year', 'datestartnumericES') }}</th>
-						<th>Waxes</th>
-						<th>Impressions</th>
-						<th>Matching impressions</th>
-						<th>Matching prints</th>
-						<th>Good prints</th>
-						<th>Partial prints</th>
-						<th>&nbsp;</th>
-					</tr>
-
-					{% for song in pagination %}
-						<tr {% if loop.index is odd %}class="color"{% endif %}>
-						    <td>{{ song.id }}</td>
-						    <td width="30%">
-						    	{% if song.FOREIGNKEYReference is defined and song.FOREIGNKEYReference is not null %}
-						    		<div class="search-item-images" data-size="small" data-type="all" data-id="{{ song.id }}" data-reference="{{ song.FOREIGNKEYReference.describfulltext }}" data-accession="{{ song.CATREFItem }}">
-						    			
-						    		</div>
-		                        {% endif %}
-						    </td>
-						    <td>{{ song.title }}</td>
-						    <td>{# {{ song.datestartnumericES }} #}</td>
-						    <td>{# {{ song.waxs|length }} #}</td>
-						    <td>
-							{#
-						    	{% set impressionCount = 0 %}
-							    {% for wax in song.waxs %}
-							    	{% set impressionCount = impressionCount + wax.impressions|length %}
-							    {% endfor %}
-							    {{ impressionCount }}
-							#}
-						    </td>
-						    {#
-						    <td>
-						    	{% set imprintCount = 0 %}
-						    	{% for wax in song.waxs %}
-						    		{% if wax.containsImprints %}
-						    			{% set imprintCount = imprintCount + 1 %}
-						    		{% endif %}
-						    	{% endfor %}
-						    	{{ imprintCount }}
-						    </td>
-						    #}
-						    <td>{# {{ song.matchingimpressions ? 'yes' : 'no' }} #}</td>
-						    <td>{# {{ song.matchingprints ? 'yes' : 'no' }} #}</td>
-						    <td>{# {{ song.getGoodprint ? 'yes' : 'no' }} #}</td>
-						    <td>{# {{ song.getPartialprint ? 'yes' : 'no' }} #}</td>
-						    <td>
-						      <a href="{{ path('show_song', {id: song.id}) }}" class="btn btn-primary btn-xs">view</a>
-						      <a target="_blank" href="{# {{ path('admin_app_dbosonguments_show', {id: song.id}) }} #}" class="btn btn-primary btn-xs">admin</a>
-						    </td>
-						</tr>
-					{% endfor %}
-				</table>
-				{# display navigation #}
-				<div class="navigation">
-				    {{ knp_pagination_render(pagination) }}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Songs</h1><br>
+				{#
+				<div>
+					<p style="margin-top: 15px;">Showing <b>{{ pagination.paginationData.firstItemNumber|number_format  }}</b> to <b>{{ pagination.paginationData.lastItemNumber|number_format  }}</b> of <b>{{ pagination.paginationData.totalCount|number_format }}</b> songs.</p>
 				</div>
-        	</div>
-        </div>
-    </div>
-
+				#}
+				{% for song in pagination %}
+					<div class="bau-result">
+						{{ pagination.getPaginationData.firstItemNumber + loop.index - 1 }}.
+						<a href="{{ path('show_song', {id: song.id}) }}">
+							<b>{{ song.title }}</b>
+						</a>
+						<br>
+						{% for person in song.getpersons() %}
+							<a href="{{ path('show_person', {id: person.id}) }}">
+								{{ person }}</a>,
+						{% endfor %}
+						{{ song.getDatingString() }}
+						<br>
+						{% for publication in song.getpublications() %}
+							<i>{{ publication.title }}</i>
+							({{ publication.getDatingString() }}){% if loop.last == false %},{% endif %}
+						{% endfor %}
+					</div>
+				{% endfor %}
+				<div id="bau-results-navigation">{{ knp_pagination_render(pagination) }}</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

@@ -4,261 +4,192 @@ namespace AppBundle\Search;
 
 class Search {
 
-    public $perPage;
-    public $form;
-    public $boolQuery;
-    public $controller;
-    public $finder;
-    public $request;
+	public $perPage;
+	public $form;
+	public $boolQuery;
+	public $controller;
+	public $finder;
+	public $request;
+	public $summary;
+	public $sort;
 
-    public function setPerPage($perPage) {
-	$this->perPage = $perPage;
-    }
+	public function setPerPage($perPage) {
+		$this->perPage = $perPage;
+	}
 
-    public function setForm($form) {
-        $this->form = $form;
-    }
+	public function setForm($form) {
+		$this->form = $form;
+	}
 
-    public function setController($controller) {
-        $this->controller = $controller;
-    }
+	public function setController($controller) {
+		$this->controller = $controller;
+	}
 
-    public function setRequest($request) {
-        $this->request = $request;
-    }
+	public function setFinder($finder) {
+		$this->finder = $finder;
+	}
+
+	public function setRequest($request) {
+		$this->request = $request;
+	}
+
+	public function getResults() {
+		$page = $this->request->get('page', 1);
+		$paginator = $this->controller->getPaginator();
+
+		$query = new \Elastica\Query();
+		
+		if (!empty($sort = $this->form['sort']->getData())) {
+			if ($sort == 'earliestYear') {
+				$this->sort = $sort;
+				$query->addSort(array('earliestYear' => array('order' => 'asc')));
+			}
+		}
+
+		$query->setQuery($this->boolQuery);
+
+		$poemsAgg = new \Elastica\Aggregation\Terms('poems');
+		$poemsAgg->setField('poems');
+	        $poemsAgg->setSize(9999);
+	        $query->addAggregation($poemsAgg);
+		
+		$genreAgg = new \Elastica\Aggregation\Terms('genres');
+		$genreAgg->setField('genres');
+	        $genreAgg->setSize(9999);
+		$query->addAggregation($genreAgg);
+		
+		$decadesAgg = new \Elastica\Aggregation\Terms('decades');
+		$decadesAgg->setField('decades');
+	        $decadesAgg->setSize(9999);
+		$query->addAggregation($decadesAgg);
+		
+		$themesAgg = new \Elastica\Aggregation\Terms('themes');
+		$themesAgg->setField('themes');
+	        $themesAgg->setSize(9999);
+		$query->addAggregation($themesAgg);
+
+		$personsAgg = new \Elastica\Aggregation\Terms('people');
+		$personsAgg->setField('persons');
+	        $personsAgg->setSize(9999);
+		$query->addAggregation($personsAgg);
+		
+		$genderAgg = new \Elastica\Aggregation\Terms('gender');
+		$genderAgg->setField('gender');
+	        $genderAgg->setSize(9999);
+		$query->addAggregation($genderAgg);
+
+		$langsAgg = new \Elastica\Aggregation\Terms('languages');
+		$langsAgg->setField('langs');
+	        $langsAgg->setSize(9999);
+		$query->addAggregation($langsAgg);
 
 
-    public function setFinder($finder) {
-        $this->finder = $finder;
-    }
+		$results = $this->finder->createPaginatorAdapter($query);
 
-    public function getResults() {
-	#var_dump($this->controller);
-        $page = $this->request->get('page', 1);
-	#$paginator = $this->controller->get('knp_paginator');
-	$paginator = $this->controller->getPaginator();
-        $results = $this->finder->createPaginatorAdapter($this->boolQuery);
-        return $pagination = $paginator->paginate($results, $page, $this->perPage, array());
-    }
+		$pagination = $paginator->paginate($results, $page, $this->perPage, array());
+	
+		return $pagination;
+	}
 
-	public function basicSearch() {
+	public function search() {
+
+		$this->summary = [];
 
 		$this->boolQuery = new \Elastica\Query\BoolQuery();
 
-    	if (!empty($keyword = $this->form['keyword']->getData())) {	       
-        	$this->boolQuery->addMust(new \Elastica\Query\SimpleQueryString($keyword));
-        }
+		if (!empty($keyword = $this->form['keyword']->getData())) {
+			$sqsQuery = new \Elastica\Query\SimpleQueryString($keyword, ['title', 'poemsTitles', 'poemsTitlesEnglish', 'personsKeyword']);
+			$this->boolQuery->addMust($sqsQuery);
+			$this->summary["Keyword"] = "'".$keyword."'";
+		}
+		
+		if (!empty($title = $this->form['title']->getData())) {
+			$sqsQuery = new \Elastica\Query\SimpleQueryString($title, ['title']);
+			$this->boolQuery->addMust($sqsQuery);
+			$this->summary["Song title"] = "'".$title."'";
+		}
+		
+		if (!empty($poemsTitles = $this->form['poemsTitles']->getData())) {
+			$sqsQuery = new \Elastica\Query\SimpleQueryString($poemsTitles, ['poemsTitles', 'poemsTitlesEnglish']);
+			$this->boolQuery->addMust($sqsQuery);
+			$this->summary["Poem title"] = "'".$poemsTitles."'";
+		}
 
-        if (!empty($repository = $this->form['repository']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('repository', $repository);
-            $this->boolQuery->addMust($termQuery);
-        }
+		if (!empty($poems = $this->form['poems']->getData())) {
+			$termQuery = new \Elastica\Query\Term();
+			$termQuery->setTerm('poems', $poems);
+			$this->boolQuery->addMust($termQuery);
+			$this->summary["Poem"] = $poems;
+		}
+		
+		if (!empty($genres = $this->form['genres']->getData())) {
+			$termQuery = new \Elastica\Query\Term();
+			$termQuery->setTerm('genres', $genres);
+			$this->boolQuery->addMust($termQuery);
+			$this->summary["Genre"] = $genres;
+		}
 
-        if (!empty($accession_number = $this->form['accession_number']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('catrefitem', $accession_number);
-            $this->boolQuery->addMust($termQuery);
-        }
+		if (!empty($languages = $this->form['languages']->getData())) {
+			$termQuery = new \Elastica\Query\Term();
+			$termQuery->setTerm('langs', $languages);
+			$this->boolQuery->addMust($termQuery);
+			$this->summary["Language"] = $languages;
+		}
+		
+		if (!empty($decades = $this->form['decades']->getData())) {
+			$termQuery = new \Elastica\Query\Term();
+			$termQuery->setTerm('decades', $decades);
+			$this->boolQuery->addMust($termQuery);
+			$this->summary["Decade"] = $decades;
+		}
+		
+		if (!empty($themes = $this->form['themes']->getData())) {
+			$termQuery = new \Elastica\Query\Term();
+			$termQuery->setTerm('themes', $themes);
+			$this->boolQuery->addMust($termQuery);
+			$this->summary["Theme"] = $themes;
+		}
 
-       	if ($this->form['yearStart']->getData() || $this->form['yearEnd']->getData()) {
-            $startYear = !empty($this->form['yearStart']->getData()) ? $this->form['yearStart']->getData() : 1100;
-            $endYear = !empty($this->form['yearEnd']->getData()) ? $this->form['yearEnd']->getData() : 1600;
-        	$this->boolQuery->addMust(new \Elastica\Query\Range('datestartnumericES', array('gte' => $startYear,'lte' => $endYear)));
-        }
+		if (!empty($people = $this->form['people']->getData())) {
+			$termQuery = new \Elastica\Query\Term();
+			$termQuery->setTerm('persons', $people);
+			$this->boolQuery->addMust($termQuery);
+			$this->summary["People"] = $people;
+		}
 
-        if (!empty($impressionPeopleES = $this->form['impressionPeopleES']->getData())) {
-            $termQuery = new \Elastica\Query\Terms();
-            $termQuery->setTerms('impressionPeopleES', array($impressionPeopleES));
-            $this->boolQuery->addMust($termQuery);
-        }
+		if (!empty($gender = $this->form['gender']->getData())) {
+			$termQuery = new \Elastica\Query\Term();
+			$termQuery->setTerm('gender', $gender);
+			$this->boolQuery->addMust($termQuery);
+			$this->summary["Gender"] = $gender;
+		}
 
-        return $this;
-	
-    }
+		if (!empty($earliestYear = $this->form['earliestYear']->getData())) {
+			$rangeQuery = new \Elastica\Query\Range();
+			#$rangeQuery->addField('sentDate.datetype', array('gte'=>$date_lower, 'lte'=>$date_upper,'format'=>'yyyy'));
+			$rangeQuery->addField('latestYear', array('gte'=>$earliestYear));
+			$this->boolQuery->addMust($rangeQuery);
+			$this->summary["Earliest year"] = $earliestYear;
+		}
+		
+		if (!empty($latestYear = $this->form['latestYear']->getData())) {
+			$rangeQuery = new \Elastica\Query\Range();
+			#$rangeQuery->addField('sentDate.datetype', array('gte'=>$date_lower, 'lte'=>$date_upper,'format'=>'yyyy'));
+			$rangeQuery->addField('earliestYear', array('lte'=>$latestYear));
+			$this->boolQuery->addMust($rangeQuery);
+			$this->summary["Latest year"] = $latestYear;
+		}
 
-    public function advancedSearch() {
+		return $this;
 
-        $this->boolQuery = new \Elastica\Query\BoolQuery();
-
-        if (!empty($keyword = $this->form['keyword']->getData())) {          
-            $this->boolQuery->addMust(new \Elastica\Query\SimpleQueryString($keyword));
-        }
-
-        //if (!empty($repository = $this->form['repository']->getData())) {
-        //    $termQuery = new \Elastica\Query\Match();
-        //    $termQuery->setFieldQuery('repository', $repository);
-        //    $termQuery->setFieldParam('repository', 'analyzer', 'default');
-        //    $this->boolQuery->addMust($termQuery);
-        //}
-
-        if (!empty($repository = $this->form['repository']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('repository', $repository);
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if (!empty($accession_number = $this->form['accession_number']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('catrefitem', $accession_number);
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if ($this->form['yearStart']->getData() || $this->form['yearEnd']->getData()) {
-            $startYear = !empty($this->form['yearStart']->getData()) ? $this->form['yearStart']->getData() : 1100;
-            $endYear = !empty($this->form['yearEnd']->getData()) ? $this->form['yearEnd']->getData() : 1600;
-            $this->boolQuery->addMust(new \Elastica\Query\Range('datestartnumericES', array('gte' => $startYear,'lte' => $endYear)));
-        }
-
-        if (!empty($documentType = $this->form['documentType']->getData())) {
-            $this->boolQuery->addMust(
-                (new \Elastica\Query\QueryString($documentType, array('documentType')))
-                ->setAnalyzer('default')
-            );
-        }
-       
-        if ($this->form['waxCountStart']->getData() !== null || $this->form['waxCountEnd']->getData() !== null) {
-            $termQuery = new \Elastica\Query\Range('waxCount', array(
-                'gte' => $this->form['waxCountStart']->getData(),
-                'lte' => $this->form['waxCountEnd']->getData()
-            ));
-            $this->boolQuery->addMust($termQuery);
-        }
-
-       if ($this->form['impressionCountStart']->getData() !== null || $this->form['impressionCountEnd']->getData() !== null) {
-            $termQuery = new \Elastica\Query\Range('impressionCount', array(
-                'gte' => $this->form['impressionCountStart']->getData(),
-                'lte' => $this->form['impressionCountEnd']->getData()
-            ));
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if ($this->form['printCountStart']->getData() !== null || $this->form['printCountEnd']->getData() !== null) {
-            $termQuery = new \Elastica\Query\Range('printCount', array(
-                'gte' => $this->form['printCountStart']->getData(),
-                'lte' => $this->form['printCountEnd']->getData()
-            ));
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if (!empty($waxAttachmentSideES = $this->form['waxAttachmentSideES']->getData())) {
-            //$this->boolQuery->addMust(
-            //    (new \Elastica\Query\QueryString($waxAttachmentSideES, array('waxAttachmentSideES')))
-            //    ->setAnalyzer('default')
-            //);
-	    $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('waxs.waxAttachmentSideES', $waxAttachmentSideES);
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if (!empty($waxAttachmentTypeES = $this->form['waxAttachmentTypeES']->getData())) {
-            //$this->boolQuery->addMust(
-            //    (new \Elastica\Query\QueryString($waxAttachmentTypeES, array('waxAttachmentTypeES')))
-            //    ->setAnalyzer('default')
-            //);
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('waxs.waxAttachmentTypeES', $waxAttachmentTypeES);
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if (!empty($waxColourES = $this->form['waxColourES']->getData())) {
-            //$this->boolQuery->addMust(
-            //    (new \Elastica\Query\QueryString($waxColourES, array('waxColourES')))
-            //    ->setAnalyzer('default')
-            //);
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('waxs.waxColourES', $waxColourES);
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if (!empty($waxConditionES = $this->form['waxConditionES']->getData())) {
-            //$this->boolQuery->addMust(
-            //    (new \Elastica\Query\QueryString($waxConditionES, array('waxConditionES')))
-            //    ->setAnalyzer('default')
-            //);
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('waxs.waxConditionES', $waxConditionES);
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if (!empty($wasHasImprintsES = $this->form['wasHasImprintsES']->getData())) {
-            $this->boolQuery->addMust(
-                (new \Elastica\Query\QueryString(''.$wasHasImprintsES, array('wasHasImprintsES')))
-                ->setAnalyzer('default')
-            );
-        }
-
-        if ($this->form['widthStart']->getData() !== null || $this->form['widthEnd']->getData() !== null) {
-            $termQuery = new \Elastica\Query\Range('impressionWidthsES', array(
-                'gte' => $this->form['widthStart']->getData(),
-                'lte' => $this->form['widthEnd']->getData()
-            ));
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if ($this->form['heightStart']->getData() !== null || $this->form['heightEnd']->getData() !== null) {
-            $termQuery = new \Elastica\Query\Range('impressionHeightsES', array(
-                'gte' => $this->form['heightStart']->getData(),
-                'lte' => $this->form['heightEnd']->getData()
-            ));
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        if (!empty($impressionShapeES = $this->form['impressionShapeES']->getData())) {
-            $this->boolQuery->addMust(
-                (new \Elastica\Query\QueryString($impressionShapeES, array('impressionShapeES')))
-                ->setAnalyzer('default')
-            );
-        }
-
-        if (!empty($impressionConditionES = $this->form['impressionConditionES']->getData())) {
-            $this->boolQuery->addMust(
-                (new \Elastica\Query\QueryString($impressionConditionES, array('impressionConditionES')))
-                ->setAnalyzer('default')
-            );
-        }
-
-        if (!empty($impressionPeopleES = $this->form['impressionPeopleES']->getData())) {
-            $this->boolQuery->addMust(
-                (new \Elastica\Query\QueryString($impressionPeopleES, array('impressionPeopleES')))
-                ->setAnalyzer('default')
-            );
-        }
-
-        if (!empty($impressionPersonTypeES = $this->form['impressionPersonTypeES']->getData())) {
-            $this->boolQuery->addMust(
-                (new \Elastica\Query\QueryString($impressionPersonTypeES, array('impressionPersonTypeES')))
-                ->setAnalyzer('default')
-            );
 	}
 
-	if (!empty($matchingimpressions = $this->form['matchingimpressions']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('matchingimpressions', true);
-            $this->boolQuery->addMust($termQuery);
-        }
+	public function getSummary() {
+		return $this->summary;
+	}
 
-	if (!empty($matchingprints = $this->form['matchingprints']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('matchingprints', true);
-            $this->boolQuery->addMust($termQuery);
-        }
-	
-	if (!empty($getGoodprint = $this->form['getGoodprint']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('getGoodprint', true);
-            $this->boolQuery->addMust($termQuery);
-        }
-	
-	if (!empty($getPartialprint = $this->form['getPartialprint']->getData())) {
-            $termQuery = new \Elastica\Query\Term();
-            $termQuery->setTerm('getPartialprint', true);
-            $this->boolQuery->addMust($termQuery);
-        }
-
-        return $this;
-
-    }
-
+	public function getSort() {
+		return $this->sort;
+	}
 
 }

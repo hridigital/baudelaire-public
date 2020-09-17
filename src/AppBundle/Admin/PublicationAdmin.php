@@ -49,10 +49,11 @@ class PublicationAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-			->add('title')
-			->add('publisher', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
-            ->add('publicationEarliest', 'date', array('years' => range(1820, date('Y'))))
-            ->add('publicationLatest', 'date', array('years' => range(1820, date('Y'))))
+	    ->add('title')
+	    #->add('publisher', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
+            ->add('publisher')
+	    ->add('publicationEarliest', null, array('years' => range(1820, date('Y'))))
+            ->add('publicationLatest', null, array('years' => range(1820, date('Y'))))
         ;
     }
 

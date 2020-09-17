@@ -66,6 +66,12 @@ services:
         tags:
             - {name: sonata.admin, manager_type: orm, group: admin, label: Scoring}
 
+    app.admin.genre:
+        class: AppBundle\Admin\GenreAdmin
+        arguments: [~, AppBundle\Entity\Genre, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Genre}
+
     app.admin.city:
         class: AppBundle\Admin\CityAdmin
         arguments: [~, AppBundle\Entity\City, SonataAdminBundle:CRUD]
@@ -101,3 +107,10 @@ services:
         arguments: [~, AppBundle\Entity\Repository, SonataAdminBundle:CRUD]
         tags:
             - {name: sonata.admin, manager_type: orm, group: admin, label: Repository}
+
+    app.admin.gender:
+        class: AppBundle\Admin\GenderAdmin
+        arguments: [~, AppBundle\Entity\Gender, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Gender }
+        public: true

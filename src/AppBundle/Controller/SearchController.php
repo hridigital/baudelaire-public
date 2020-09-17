@@ -5,97 +5,124 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use AppBundle\Form\AdvancedSearchType;
 use AppBundle\Form\SearchType;
 use AppBundle\Entity\DboDocuments;
 use AppBundle\Search\Search;
+#use AppBundle\Wiki\WikiManager;
 
 use AppBundle\Search\Params;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchController extends Controller
 {
-    /**
-     * @Route("/search", name="search")
-     */
-    public function indexAction(Request $request)
-    {
-    	$params = new Params();
 
-    	$form = $this->createForm(SearchType::class, $params, array(
-            'action' => $this->generateUrl('search'),
-            'method' => 'GET',
-            'entity_manager' => $this->getDoctrine()->getManager()
-        ));
+	/**
+	 * @Route("/advanced", name="advanced")
+	 */
+	public function advancedAction(Request $request)
+	{
+		
+		#$em = $this->getDoctrine()->getManager('wiki');
 
-        $form->handleRequest($request);
+		#$wiki_image_path = $this->container->getParameter('wiki_image_path');
 
-        if ($form->isSubmitted()) {
-        	
-	    $search = new Search();
-            $search->setRequest($request);
-            $search->setForm($form);
-            $search->setPerPage(10);
-            $search->setController($this);
-            $search->setFinder($this->container->get('fos_elastica.finder.app.song'));
-        	$pagination = $search->basicSearch()->getResults();
+		#$wikiManager = new WikiManager($em, $this, $wiki_image_path);
+		#$wikiManager->setPage('Songs');
 
-            $em = $this->getDoctrine()->getManager();
-	    foreach ($pagination as $item) {
-		#if ($item->getForeignkeyreference() != null && $item->getCatrefitem() != null) {
-			#$item->images = $em->getRepository('AppBundle:ImageLookup')->findDocumentImages( $item->getForeignkeyreference()->getDescribfulltext(), $item->getCatrefitem());
+		#$wikipage = $wikiManager->getPage();
+
+		$form = $this->createForm(SearchType::class, null, array(
+			'action' => $this->generateUrl('advanced_results'),
+			'method' => 'GET',
+			'entity_manager' => $this->getDoctrine()->getManager(),
+			'csrf_protection' => false
+		));
+
+		$form->handleRequest($request);
+
+		#if ($form->isSubmitted()) {
+
+		#	$search = new Search();
+		#	$search->setRequest($request);
+		#	$search->setForm($form);
+		#	$search->setPerPage(10);
+		#	$search->setController($this);
+		#	$search->setFinder($this->container->get('fos_elastica.finder.app.song'));
+		#	$pagination = $search->search()->getResults();
+
+		#	$aggs = $pagination->getCustomParameters()['aggregations'];
+
+		#	return $this->render('AppBundle:search:results.html.twig', array(
+		#		'pagination' => $pagination,
+		#		'mode' => 'advanced',
+		#		'form' => $form->createView(),
+		#		'aggs' => $aggs,
+		#	));
 		#}
-            }
 
-	        return $this->render('AppBundle:search:results.html.twig', array(
-	        	"pagination" => $pagination,
-                "mode" => 'basic'
-	        ));
-        }
+		return $this->render('AppBundle:home:index.html.twig', array(
+			'form' => $form->createView(),
+			'mode' => 'advanced',
+			#'wikipage' => $wikipage,
+		));
+	}
 
-        return $this->render('AppBundle:search:index.html.twig', array(
-            'form' => $form->createView()
-        ));
-    }
+	/**
+	 * @Route("/results", name="results")
+	 * @Route("/advanced-results", name="advanced_results")
+	 */
+	public function indexAction(Request $request)
+	{
+		$routeName = $request->get('_route');
 
-    /**
-     * @Route("/advanced-search", name="advanced_search")
-     */
-    public function advancedAction(Request $request)
-    {
-    	$params = new Params();
+		$mode = 'basic';
 
-    	$form = $this->createForm(AdvancedSearchType::class, $params, array(
-            'action' => $this->generateUrl('advanced_search'),
-            'method' => 'GET',
-            'entity_manager' => $this->getDoctrine()->getManager()
-        ));
+		if ($routeName == 'advanced_results') { $mode = 'advanced'; }
 
-        $form->handleRequest($request);
+		$form = $this->createForm(SearchType::class, null, array(
+			'action' => $this->generateUrl('results'),
+			'method' => 'GET',
+			'entity_manager' => $this->getDoctrine()->getManager(),
+			'csrf_protection' => false
+		));
 
-        if ($form->isSubmitted()) {
-        	
-	    $search = new Search();
-            $search->setRequest($request);
-            $search->setForm($form);
-            $search->setPerPage(10);
-            $search->setController($this);
-            $search->setFinder($this->container->get('fos_elastica.finder.app.song'));
-            $pagination = $search->advancedSearch()->getResults();
+		$form->handleRequest($request);
 
-	        return $this->render('AppBundle:search:results.html.twig', array(
-	        	"pagination" => $pagination,
-                "mode" => 'advanced'
-	        ));
-        }
+		//if ($form->isSubmitted()) {
 
-        return $this->render('AppBundle:search:advanced.html.twig', array(
-            'form' => $form->createView()
-        ));
-    }
+			$search = new Search();
+			$search->setRequest($request);
+			$search->setForm($form);
+			$search->setPerPage(10);
+			$search->setController($this);
+			$search->setFinder($this->container->get('fos_elastica.finder.app.song'));
+			$pagination = $search->search()->getResults();
 
-    public function getPaginator() {
-	return $this->get('knp_paginator');
-    }
+			$aggs = $pagination->getCustomParameters()['aggregations'];
+
+			$summary = $search->getSummary();
+			$sort = $search->getSort();
+
+			$em = $this->getDoctrine()->getManager();
+			
+			return $this->render('AppBundle:search:results.html.twig', array(
+				'pagination' => $pagination,
+				'mode' => $mode,
+				'form' => $form->createView(),
+				'aggs' => $aggs,
+				'summary' => $summary,
+				'sort' => $sort
+			));
+
+		//}
+
+		#return $this->render('AppBundle:home:index.html.twig', array(
+		#	'form' => $form->createView()
+		#));
+	}
+
+	public function getPaginator() {
+		return $this->get('knp_paginator');
+	}
 
 }

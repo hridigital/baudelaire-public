@@ -68,13 +68,24 @@ class PoemAdmin extends Admin
             ->add('title')
             ->add('english')
             ->add('position')
-            ->add('compositionEarliest', 'date', array('years' => range(1821, 1867)))
-            ->add('compositionLatest', 'date', array('years' => range(1821, 1867)))
-            ->add('publications', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
-            ->add('metres', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
-            ->add('form', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
-            ->add('rhyme', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
-            ->add('themes', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
+            ->add('compositionEarliest', null, array('years' => range(1821, 1867)))
+	    ->add('compositionLatest', null, array('years' => range(1821, 1867)))
+
+	    #->add('publications', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
+            ->add('publications', null, array('by_reference' => false))
+
+	    #->add('metres', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
+            ->add('metres', null, array('by_reference' => false))
+
+	    #->add('form', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
+            ->add('form')
+
+	    #->add('rhyme', 'sonata_type_model', array('choices_as_values' => true, 'required' => false))
+            ->add('rhyme')
+
+	    #->add('themes', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
+            ->add('themes', null, array('by_reference' => false))
+
             ->add('songs')
             ->add('notes')
         ;

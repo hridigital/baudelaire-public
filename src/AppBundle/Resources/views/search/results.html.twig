@@ -1,89 +1,180 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <div id="wrapper">
-        <div class="container">
-            <div class="row">
-            	<div class="col-md-12">
-            		<h1>Search Results</h1>
-					<div class="row">
-						<div class="col-md-6">
-							<p style="margin-top: 15px;">Showing {{ pagination.paginationData.firstItemNumber|number_format  }} to {{ pagination.paginationData.lastItemNumber|number_format  }} of {{ pagination.paginationData.totalCount|number_format }}</p>
-						</div>
-						<div class="col-md-6">
-							{# <a href="{{ path('chart', app.request.query.all|merge({'mode':mode})) }}" class="btn btn-primary pull-right">Visualise</a> #}
-						</div>
-					</div>
-					<br />
-					<table class="table">
-						<tr>
-						    <th>{{ knp_pagination_sortable(pagination, 'Id', 'id') }}</th>
-						    <th>Images</th>
-						    <th>{{ knp_pagination_sortable(pagination, 'Shelf Mark', 'shelfMark') }}</th>
-						    <th>{{ knp_pagination_sortable(pagination, 'Year', 'datestartnumericES') }}</th>
-							<th>Waxes</th>
-							<th>Impressions</th>
-							<th>Matching impressions</th>
-							<th>Matching prints</th>
-							<th>Good prints</th>
-							<th>Partial prints</th>
-							<th>&nbsp;</th>
-						</tr>
+{% block title %}
+	Search Results -
+{% endblock %}
 
-						{% for song in pagination %}
-							<tr {% if loop.index is odd %}class="color"{% endif %}>
-							    <td>{{ song.id }}</td>
-							    <td width="30%">
-							    	{% if song.FOREIGNKEYReference is defined and song.FOREIGNKEYReference is not null %}
-									<div class="search-item-images" data-size="small" data-type="all" data-id="{{ song.id }}" data-reference="{{ song.FOREIGNKEYReference.describfulltext }}" data-accession="{{ song.CATREFItem }}">
-							    			
-							    		</div>
-			                        {% endif %}
-							    </td>
-							    <td>{{ song.title }}</td>
-							    <td>{# {{ song.datestartnumericES }} #}</td>
-							    <td>
-								{# {{ song.waxCount }} #}
-								{# 
-								    {{ song.waxs|length }}
-								#}
-							    </td>
-							    <td>
-								{# {{ song.impressionCount }} #}
-								{#
-							    	{% set impressionCount = 0 %}
-								    {% for wax in song.waxs %}
-								    	{% set impressionCount = impressionCount + wax.impressions|length %}
-								    {% endfor %}
-								    {{ impressionCount }}
-								#}
-							    </td>
-								{#
-							    	{% set imprintCount = 0 %}
-							    	{% for wax in song.waxs %}
-							    		{% if wax.containsImprints %}
-							    			{% set imprintCount = imprintCount + 1 %}
-							    		{% endif %}
-							    	{% endfor %}
-							    	{{ imprintCount }}
-								#}
-							    <td>{# {{ song.matchingimpressions ? 'yes' : 'no' }} #}</td>
-							    <td>{# {{ song.matchingprints ? 'yes' : 'no' }} #}</td>
-							    <td>{# {{ song.getGoodprint ? 'yes' : 'no' }} #}</td>
-							    <td>{# {{ song.getPartialprint ? 'yes' : 'no' }} #}</td>
-							    <td>
-								<a href="{{ path('show_song', {id: song.id}) }}" class="btn btn-primary btn-xs">view</a>
-								<a target="_blank" href="{# {{ path('admin_app_dbosonguments_show', {id: song.id}) }} #}" class="btn btn-primary btn-xs">admin</a>
-							    </td>
-							</tr>
-						{% endfor %}
-					</table>
-					{# display navigation #}
-					<div class="navigation">
-					    {{ knp_pagination_render(pagination) }}
+{% block body %}
+	<div class="container">
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
+		{% if mode == "advanced" %}<span style="display:none;">{% endif %}
+			<div class="row">
+				<div class="col-12">
+					<div class="input-group mb-3">
+						{{ form_widget(form.keyword) }}
+						<div class="input-group-append">{{ form_widget(form.search) }}</div>
+					</div>						
+				</div>
+			</div>
+		{% if mode == "advanced" %}</span>{% endif %}
+		<span style="display:none;">
+			<div class="row">
+				<div class="col-6">
+					{{ form_row(form.title) }}
+				</div>
+				<div class="col-6">
+					{{ form_row(form.poemsTitles) }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					{{ form_row(form.poems) }}
+				</div>
+				<div class="col-6">
+					{{ form_row(form.themes) }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					{{ form_row(form.genres) }}
+				</div>
+				<div class="col-6">
+					{{ form_row(form.languages) }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					{{ form_row(form.people) }}
+				</div>
+				<div class="col-6">
+					{{ form_row(form.gender) }}
+				</div>
+
+				<div class="col-6">
+					{{ form_row(form.decades) }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					{{ form_row(form.earliestYear) }}
+				</div>
+				<div class="col-6">
+					{{ form_row(form.latestYear) }}
+				</div>
+			</div>
+		</span>
+		<span style="display:none;">{{ form_row(form.sort) }}</span>
+		{{ form_end(form) }}
+
+		{# <p>Mode is: {{ mode }}</p> #}
+
+		{% if mode == 'advanced' %}
+			<div class="row">
+				<div class="col-8">
+					{% for key, value in summary %}
+						<b>{{ key }}</b> {{ value }}{% if loop.last == false %},{% else %}.{% endif %}
+					{% endfor %}
+				</div>
+
+				<div class="col-4 text-right">
+					<a href="{{ path('advanced', app.request.query.all|merge(app.request.attributes.get('_route_params'))) }}">Return to search form</a><br>
+					{# <a href="{{ path('advanced') }}">New Advanced Search</a><br>
+					<a href="{{ path('search') }}">New Simple Search</a> #}
+				</div>
+			</div>
+		{% endif %}
+
+		{% if pagination.paginationData.totalCount == 0 %}
+
+			{% if mode == "advanced" %}
+				<p><b>Sorry, no results were found for this query.</b></p>
+				<a href="{{ path('advanced', app.request.query.all|merge(app.request.attributes.get('_route_params'))) }}">Return to search form</a>
+			{% else %}
+				<p><b>Sorry, no results were found for this query.</b></p>
+			{% endif %}
+
+
+		{% else %}
+
+			<div class="row">
+
+				<div class="col-8">
+					<div class="d-flex justify-content-between mt-3 mb-4">
+						<div>
+							Showing <b>{{ pagination.paginationData.firstItemNumber|number_format  }}</b> to <b>{{ pagination.paginationData.lastItemNumber|number_format  }}</b> of <b>{{ pagination.paginationData.totalCount|number_format }}</b> songs.
+						</div>
+						<div class="text-muted">
+							{% if sort == "earliestYear" %}
+								Sorted by year of composition
+								<a class="ml-2" href="{{ path('advanced_results', app.request.query.all|merge(app.request.attributes.get('_route_params'))|merge({("search[sort]"): ""}) ) }}">Sort by relevance</a>
+							{% else %}
+								Sorted by relevance
+								<a class="ml-2" href="{{ path('advanced_results', app.request.query.all|merge(app.request.attributes.get('_route_params'))|merge({("search[sort]"): "earliestYear"}) ) }}">Sort by year of composition</a>
+							{% endif %}
+						</div>
 					</div>
-            	</div>
-            </div>
-        </div>
-    </div>
+
+					{% for song in pagination %}
+						<div class="bau-result">
+							<b>{{ pagination.getPaginationData.firstItemNumber + loop.index - 1 }}</b>.
+							<a href="{{ path('show_song', {id: song.id}) }}">
+								<b>{{ song.title }}</b>
+							</a>
+							<br>
+							{% for person in song.getpersons() %}
+								<a href="{{ path('show_person', {id: person.id}) }}">
+									{{ person }}</a>{% if loop.last == false %},{% endif %}
+							{% endfor %}
+							{% if song.hasViewData() %}
+								<a href="{{ path('view_song', {id: song.id}) }}"><span class="badge badge-success">Song Viewer Available</span></a>
+							{% endif %}
+							{% if song.getDatingString() is not empty %}
+								<br>
+								<small class="text-muted">{{ song.getDatingString() }}</small>
+							{% endif %}
+							<br>
+							{% for publication in song.getpublications() %}
+								<i>{{ publication.title }}</i>
+								({{ publication.getDatingString() }}){% if loop.last == false %},{% endif %}
+							{% endfor %}
+						</div>
+					{% endfor %}
+					<div id="bau-results-navigation">{{ knp_pagination_render(pagination) }}</div>
+				</div>
+
+				<div class="col-4">
+					{% for aggname, agg in aggs %}
+						{% if agg['buckets']|length > 0 %}
+							<div class="card mt-3">
+								<div class="card-body">
+									<h5 class="card-title">{{ aggname | capitalize }}</h5>
+									<p class="card-text">
+									{% for facet in agg['buckets'] %}
+
+										{% if loop.index == 6 and loop.length > 6 %}
+											<br>
+											<a data-toggle="collapse" href="#seemore{{ aggname }}" role="button" aria-expanded="false" aria-controls="seemore{{ aggname }}">
+												<b>See More ({{ loop.length - 6 }})</b>
+											</a>
+											<div class="collapse" id="seemore{{ aggname }}">
+										{% endif %}
+
+										<a href="{{ path('advanced_results', app.request.query.all|merge(app.request.attributes.get('_route_params'))|merge({("search[" ~ aggname ~ "]"): facet['key']}) ) }}">{{ facet['key'] }} ({{ facet['doc_count'] }})</a>{% if loop.last == false %},{% endif %}
+
+										{% if loop.index > 6 and loop.last  %}
+											</div>
+										{% endif %}
+
+									{% endfor %}
+									</p>
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>	
+			</div>
+
+		{% endif %}
+	</div>
 {% endblock %}

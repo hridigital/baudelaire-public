@@ -16,8 +16,8 @@ class RecordingAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-			->add('title')
-			->add('songs')
+            ->add('title')
+            ->add('songs')
             ->add('recordingEarliest')
             ->add('recordingLatest')
             ->add('publications')
@@ -53,12 +53,17 @@ class RecordingAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-			->add('title')
-			->add('songs')
-            ->add('recordingEarliest', 'date', array('years' => range(1821, date('Y'))))
-            ->add('recordingLatest', 'date', array('years' => range(1821, date('Y'))))
-            ->add('publications', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
-            ->add('persons', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
+            ->add('title')
+            ->add('songs', null, array('by_reference' => false))
+            ->add('recordingEarliest', null, array('years' => range(1821, date('Y'))))
+	    ->add('recordingLatest', null, array('years' => range(1821, date('Y'))))
+
+            #->add('publications', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
+            ->add('publications', null, array('by_reference' => false))
+
+	    #->add('persons', 'sonata_type_model', array('choices_as_values' => true, 'required' => false, 'expanded' => false, 'multiple' => true, 'by_reference' => false, 'cascade_validation' => true))
+            ->add('persons', null, array('by_reference' => false))
+
         ;
     }
 
