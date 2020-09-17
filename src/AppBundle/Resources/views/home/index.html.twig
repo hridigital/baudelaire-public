@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
+		<div class="row">
+			{% if mode == "basic" %}
+				<div class="col-12">
+					<div class="input-group mb-3">
+						{{ form_widget(form.keyword) }}
+						<div class="input-group-append">{{ form_widget(form.search) }}</div>
+					</div>
+					<span style="display:none;">{{ form_row(form.decades) }}</span>
+				</div>
+			{% else %}
+				<div class="col-6">
+					{{ form_row(form.keyword) }}
+				</div>
+				<div class="col-6">
+					{{ form_row(form.decades) }}
+				</div>
+			{% endif %}
+		</div>
+		{% if mode == "basic" %}
+			<span style="display:none;">
+		{% endif %}
+		<div class="row">
+			<div class="col-6">
+				{{ form_row(form.title) }}
+			</div>
+			<div class="col-6">
+				{{ form_row(form.poemsTitles) }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				{{ form_row(form.poems) }}
+			</div>
+			<div class="col-6">
+				{{ form_row(form.themes) }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				{{ form_row(form.genres) }}
+			</div>
+			<div class="col-6">
+				{{ form_row(form.languages) }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				{{ form_row(form.people) }}
+			</div>
+			<div class="col-6">
+				{{ form_row(form.gender) }}
+			</div>	
+		</div>
+		<div class="row">
+			<div class="col-6">
+				{{ form_row(form.earliestYear) }}
+			</div>
+			<div class="col-6">
+				{{ form_row(form.latestYear) }}
+			</div>
+		</div>
+		{% if mode == "basic" %}
+			</span>
+		{% endif %}
+		<div class="row">
+			{% if mode == "basic" %}
+				<div class="col-12 text-right">
+					<a href="{{ path('advanced') }}">Advanced Search</a>
+				</div>
+			{% else %}
+				<div class="col-6 text-left">
+					<a href="{{ path('search') }}">Back to Simple Search</a>
+				</div>
+				<div class="col-6 text-right">
+					{{ form_widget(form.search) }}
+				</div>
+			{% endif %}
+		</div>
+		<span style="display:none;">{{ form_row(form.sort) }}</span>
+		{{ form_end(form) }}
+		{% if mode == "basic" %}
+			{{ wikipage.content|raw }}
+		{% endif %}
+	</div>
+{% endblock %}

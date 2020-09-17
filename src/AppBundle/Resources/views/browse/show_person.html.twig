@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ person }} - {% endblock %}
+
+{% block body %}
+
+	<div class="container">
+
+		<h1>{{ person }}</h1>
+		<table class="table">
+			<tbody>
+
+				{% if person.countrys is not empty %}
+					<tr>
+						<th scope="row"><h3>Countries</h3></th>
+						<td>
+							{% for country in person.countrys %}
+								{{ country }}{% if loop.last == false %},{% endif %}
+							{% endfor %}
+
+						</td>
+					</tr>
+				{% endif %}
+
+				{% if person.gender is not empty %}
+					<tr>
+						<th scope="row"><h3>Gender</h3></th>
+						<td>
+							{{ person.gender | capitalize }}
+						</td>
+					</tr>
+				{% endif %}
+
+				{% if person.songs is not empty %}
+					<tr>
+						<th scope="row"><h3>Songs</h3></th>
+						<td>
+							<ul>
+								{% for song in person.songs %}
+									<li>
+										<a href="{{ path('show_song', {id: song.id}) }}">
+											<b>{{ song.title }}</b>
+										</a>
+										{% for person in song.getpersons() %}
+											{{ person }},
+										{% endfor %}
+										{{ song.getDatingString() }}
+									</li>
+								{% endfor %}
+							</ul>
+						</td>
+					</tr>
+				{% endif %}
+
+			</tbody>
+		</table>
+
+	</div>
+
+{% endblock %}
+

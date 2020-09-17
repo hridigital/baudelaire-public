@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		<div class="feature-box app clearfix">
+			<h1>{{ song.title }}</h1>
+			<h2>
+				{% for person in song.getpersons() %}
+					<a href="{{ path('show_person', {id: person.id}) }}">
+						{{ person }}</a>{% if loop.last == false %},{% endif %}
+				{% endfor %}
+				{% if song.getDatingString() is not empty %}
+					<br>
+					<small class="text-muted">{{ song.getDatingString() }}</small>
+				{% endif %}
+			</h2>
+			<div class="row mb-4 mt-3">
+				<div class="col-6">
+					<h6 class="font-weight-bold">Urtext</h6>
+					<textarea id="Urtext" rows="4" style="width: 100%;" class="form-control">Original Text</textarea>
+				</div>
+				<div class="col-6">
+					<h6 class="font-weight-bold">Translation</h5>
+					<textarea id="Urtextt" rows="4" style="width: 100%;" class="form-control">Translation</textarea>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+					<!--<canvas id="canvast" height="20" style="width: 100%;"></canvas>-->
+					<canvas id="canvast" height="80" width="1120" style="width: 100%;"></canvas>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+					<!--<canvas id="canvasw" height="30" style="width: 100%;"></canvas>-->
+					<canvas id="canvasw" height="80" width="1120" style="width: 100%;"></canvas>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<div class="col-12">
+					<!--<canvas id="canvass" height="20" style="width: 100%;"></canvas>-->
+					<canvas id="canvass" height="80" width="1120" style="width: 100%;"></canvas>
+				</div>
+			</div>
+			<!--
+			<div class="row">
+				<div class="two-columns">Zoom
+					<input id="SlideZoom" type="text" data-slider-min="1" data-slider-max="10" data-slider-step="0.1" data-slider-value="1">
+				</div>
+			-->
+			<div class="row mb-3">
+				<div class="col-2">
+					<h6 class="font-weight-bold">Time</h5>
+					<input id="Time" type="text" style="width: 100%;" class="form-control"/>
+				</div>
+				<div class="col-2">
+					<h6 class="font-weight-bold">Stanza:Line</h5>
+					<input id="Stanza" type="text" style="width: 100%;" class="form-control"/>
+				</div>
+				<div class="col-2">
+					<h6 class="font-weight-bold">Word</h5>
+					<input id="Word" type="text" style="width: 100%;" class="form-control"/>
+				</div>
+				<div class="col-6">
+					<h6 class="font-weight-bold">Phrase</h5>
+					<input id="Info" type="text" style="width: 100%;" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<!--
+				<div class="one-column">Position
+					<input id="SlidePos" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="0.1" data-slider-value="0">
+				</div>
+				-->
+				<div class="col-12">
+					<h6 class="font-weight-bold">Position</h5>
+					<input id="SlidePos" type="range" min="1" max="100" value="1" class="slider">
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+					<!--<canvas id="canvasm" height="100" style="width: 100%;"></canvas>-->
+					<canvas id="canvasm" height="370" width="1120" style="width: 100%;"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

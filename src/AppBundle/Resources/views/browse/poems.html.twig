@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Poems - {% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Poems</h1><br>
+				{#
+				<div>
+					<p style="margin-top: 15px;">Showing <b>{{ pagination.paginationData.firstItemNumber|number_format  }}</b> to <b>{{ pagination.paginationData.lastItemNumber|number_format  }}</b> of <b>{{ pagination.paginationData.totalCount|number_format }}</b> poems.</p>
+				</div>#}
+				{% for poem in pagination %}
+					<div class="bau-result">
+						{{ pagination.getPaginationData.firstItemNumber + loop.index - 1 }}.
+						<a href="{{ path('show_poem', {id: poem.id}) }}">
+							<b>{{ poem.title }}</b>
+						</a>
+						{#
+						<br>
+						{% for person in poem.getpersons() %}
+							<a href="{{ path('show_person', {id: person.id}) }}">
+								{{ person }}</a>,
+						{% endfor %}
+						{{ poem.getDatingString() }}
+						<br>
+						{% for publication in poem.getpublications() %}
+							<i>{{ publication.title }}</i>
+							({{ publication.getDatingString() }}){% if loop.last == false %},{% endif %}
+						{% endfor %}
+						#}
+					</div>
+				{% endfor %}
+				<div id="bau-results-navigation">{{ knp_pagination_render(pagination) }}</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

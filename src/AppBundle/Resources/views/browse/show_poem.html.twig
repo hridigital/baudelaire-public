@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ poem.title }} - {% endblock %}
+
+{% block body %}
+
+	<div class="container">
+
+		<h1>{{ poem }}</h1>
+		<h2>{{ poem.getDatingString() }}</h2>
+		<br>
+
+		<table class="table">
+			<tbody>
+
+				{% if poem.publications is not empty %}
+					<tr>
+						<th scope="row"><h3>Publications</h3></th>
+						<td>
+							<ul>
+								{% for publication in poem.publications %}
+									<li>
+										<i>{{ publication.title }}</i>
+										({{ publication.getDatingString() }})
+									</li>
+								{% endfor %}
+							</ul>
+						</td>
+					</tr>
+				{% endif %}
+
+				{% if poem.metres is not empty %}
+					<tr>
+						<th scope="row"><h3>Metres</h3></th>
+						<td>
+							{% for metre in poem.metres %}
+								{{ metre }}{% if loop.last == false %},{% endif %}
+							{% endfor %}
+
+						</td>
+					</tr>
+				{% endif %}
+
+				{% if poem.themes is not empty %}
+					<tr>
+						<th scope="row"><h3>Themes</h3></th>
+						<td>
+							{% for theme in poem.themes %}
+								{{ theme }}{% if loop.last == false %},{% endif %}
+							{% endfor %}
+
+						</td>
+					</tr>
+				{% endif %}
+
+				{% if poem.form is not empty %}
+					<tr><th scope="row"><h3>Form</h3></th><td>{{ poem.form }}</td></tr>
+				{% endif %}
+
+				{% if poem.rhyme is not empty %}
+					<tr><th scope="row"><h3>Rhyme</h3></th><td>{{ poem.rhyme }}</td></tr>
+				{% endif %}
+
+				{% if poem.songs is not empty %}
+					<tr>
+						<th scope="row"><h3>Songs</h3></th>
+						<td>
+							<ul>
+								{% for song in poem.songs %}
+									<li>
+										<a href="{{ path('show_song', {id: song.id}) }}">
+											<b>{{ song.title }}</b>
+										</a>
+										{% for person in song.getpersons() %}
+											{{ person }},
+										{% endfor %}
+										{{ song.getDatingString() }}
+									</li>
+								{% endfor %}
+							</ul>
+						</td>
+					</tr>
+				{% endif %}
+
+			</tbody>
+		</table>
+
+	</div>
+
+{% endblock %}
+
