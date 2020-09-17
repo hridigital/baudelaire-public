@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="wrapper">
+        <div class="container">
+            
+            			<div class="row">
+				<div class="col-md-12">
+					<p><a href="{{ path('advanced_search') }}" class="btn btn-default">Advanced Search</a></p>
+				</div>
+			</div>
+
+			<div class="row">
+				{{ form_start(form) }}
+				{{ form_errors(form) }}
+				<div class="col-md-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Keyword</h3>
+						</div>
+						<div class="panel-body">
+							{{ form_row(form.keyword) }}
+						</div>
+					</div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Repository</h3>
+						</div>
+						<div class="panel-body">
+							{{ form_row(form.repository) }}
+						</div>
+						<div class="panel-body">
+							{{ form_row(form.accession_number) }}
+						</div>
+					</div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Date</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-6">	
+									{{ form_row(form.yearStart) }}
+								</div>
+								<div class="col-md-6">	
+									{{ form_row(form.yearEnd) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">People</h3>
+						</div>
+						<div class="panel-body">
+							{{ form_row(form.impressionPeopleES) }}
+						</div>
+					</div>
+					-->
+				</div>
+        	</div>
+        	<div class="row">
+				<div class="col-md-6">	
+					{{ form_row(form.resetForm) }}
+				</div>
+				<div class="col-md-6">	
+					{{ form_row(form.search) }}
+				</div>
+			</div>
+        </div>
+    </div>
+{% endblock %}

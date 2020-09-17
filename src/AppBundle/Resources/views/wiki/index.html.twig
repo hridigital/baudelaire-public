@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="wrapper">
+        <div class="container">
+            <div class="row">
+		{#
+            	<div class="col-md-3">
+					<div class="list-group">
+						{{ sidebar_page.content_raw | raw }}
+					</div> 
+            	</div>
+		#}
+            	<div class="col-md-12">
+			{#
+			<div class="panel panel-info">
+				<div class="panel-body" id="wiki-text">{{ page.content_raw }}</div>
+			</div>
+			<div class="panel panel-info">
+				<div class="panel-body">{{ page.content_raw }}</div>
+			</div>
+			<div class="panel panel-info">
+				<div class="panel-body">{{ page.content }}</div>
+			</div>
+			#}
+	
+			{{ page.content|raw }}
+
+            	</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

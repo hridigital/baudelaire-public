@@ -1,0 +1,298 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container">
+
+       <h1>{{ song }}</h1>
+        
+        <div class="row">
+        	
+            <div class="col-md-12">
+                
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th class="col-md-4">Shelf Mark</th>
+				    <td class="col-md-8">{# {{ document.FOREIGNKEYReference ~ '-' ~ document.CATREFItem }} #}</td>
+                                </tr>
+                                <tr>
+                                    <th class="col-md-4">Repository</th>
+				    <td class="col-md-8">{# {{ document.foreignkeyreference.foreignkeyrepository }} #}</td>
+                                </tr>
+                                <tr>
+                                    <th class="col-md-4">Group</th>
+				    <td class="col-md-8">{# {{ document.foreignkeyreference.foreignkeyrefcollection }} #}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Date</h4>
+
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th class="col-md-4">Start Year</th>
+				    <td class="col-md-8">{# {{ document.datestartnumericES }} #}</td>
+                                </tr>
+                                <tr>
+                                    <th class="col-md-4">End Year</th>
+				    <td class="col-md-8">{# {{ document.dateendnumericES }} #}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="col-md-6">
+			{#
+                        {% if document.FOREIGNKEYReference is defined %}
+                            <div class="toolbar" id="toolbarDiv-document-{{ document.id }}" class="toolbar" style="padding-bottom: 40px"></div>
+                            <div class="openseadragon-document" id="openseadragon-document-{{ document.id }}" data-type="document" data-id="{{ document.id }}" data-reference="{{ document.FOREIGNKEYReference.describfulltext }}" data-size="large" data-accession="{{ document.CATREFItem }}" style="height:300px; width: 100%"></div>
+                        {% endif %}
+			#}
+                    </div>
+
+                </div>
+
+                <h4>Item Features</h4>
+
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th class="col-md-4">Sealing Clause</th>
+			    <td class="col-md-8">{# {{ document.descrbsealingclauseyn ? 'yes' : 'no' }} #}</td>
+                        </tr>
+                        <tr>
+                            <th class="col-md-4">Parties (from repository catalogue)</th>
+			    <td class="col-md-8">{# {{ document.descrbparties }} #}</td>
+                        </tr>
+                        <tr>
+                            <th class="col-md-4">Language</th>
+			    <td class="col-md-8">{# {{ document.foreignkeylanguage }} #}</td>
+                        </tr>
+                        <tr>
+                            <th class="col-md-4">Description of Content</th>
+			    <td class="col-md-8">{# {{ document.descrbrepositcatalogue }} #}</td>
+                        </tr>
+                        <tr>
+                            <th class="col-md-4">Document Notes</th>
+			    <td class="col-md-8">{# {{ document.documentnotes }} #}</td>
+                        </tr>
+			<tr>
+			    <th class="col-md-4">Has Matching Impressions?</th>
+			    <td class="col-md-8">{# {{ document.matchingimpressions ? 'yes' : 'no' }} #}</td>
+			</tr>
+			<tr>
+			    <th class="col-md-4">Has Matching Prints?</th>
+			    <td class="col-md-8">{# {{ document.matchingprints ? 'yes' : 'no' }} #}</td>
+			</tr>
+			<tr>
+			    <th class="col-md-4">Has Good Prints?</th>
+			    <td class="col-md-8">{# {{ document.getGoodprint ? 'yes' : 'no' }} #}</td>
+			</tr>
+			<tr>
+			    <th class="col-md-4">Has Partial Prints?</th>
+			    <td class="col-md-8">{# {{ document.getPartialprint ? 'yes' : 'no' }} #}</td>
+			</tr>
+                    </tbody>
+                </table>
+
+		{#
+                {% for wax in document.waxs %}
+
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse1-{{ loop.index }}">Wax {{ loop.index }}</a>
+                                </h4>
+                            </div>
+                            <div id="collapse1-{{ loop.index }}" class="panel-collapse collapse in">
+                                {% set waxIndex = loop.index %}
+                                <div class="panel-body">
+			
+				    <div class="row">
+					<div class="col-md-6">
+						<h4>{{ wax }}</h4>
+
+						<table class="table table-bordered">
+							<tbody>
+							    <tr>
+								<th class="col-md-4">Attachment Type</th>
+								<td class="col-md-8">{{ wax.foreignkeyattachment }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Attachment Side</th>
+								<td class="col-md-8">{{ wax.attachmentside }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Attachment Comment</th>
+								<td class="col-md-8">{{ wax.attachmentcomment }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Colour of Wax</th>
+								<td class="col-md-8">{{ wax.foreignkeycolour }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Condition of Wax     </th>
+								<td class="col-md-8">{{ wax.foreignkeycondition }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Contains Imprint?</th>
+								<td class="col-md-8">{{ wax.containsimprints ? 'yes' : 'no' }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Good print?</th>
+								<td class="col-md-8">{{ wax.goodprint ? 'yes' : 'no' }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Partial print?</th>
+								<td class="col-md-8">{{ wax.partialprint ? 'yes' : 'no' }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Has Matching Prints?</th>
+								<td class="col-md-8">{{ wax.matchingprints ? 'yes' : 'no' }}</td>
+							    </tr>
+							    <tr>
+								<th class="col-md-4">Has Matching Impressions?</th>
+								<td class="col-md-8">{{ wax.matchingimpressions ? 'yes' : 'no' }}</td>
+							    </tr>
+
+							    {% if wax.containsimprints %}
+								<tr>
+								    <th class="col-md-4">Imprints Comment</th>
+								    <td class="col-md-8">{{ wax.imprintsComment}}</td>
+								</tr>
+							    {% endif %}
+							</tbody>
+						</table>
+
+					</div>
+					<div class="col-md-6" style="min-height: 370px;">
+						{% if document.FOREIGNKEYReference is defined %}
+                                                	<div id="toolbarDiv-wax-{{ wax.id }}" class="toolbar" style="padding-bottom: 40px"></div>
+                                                	<div class="openseadragon-wax" id="openseadragon-wax-{{ wax.id }}" data-size="large" data-type="wax" data-position="{{ wax.positiononitem }}" data-id="{{ wax.id }}" data-reference="{{ document.FOREIGNKEYReference.describfulltext }}" data-accession="{{ document.CATREFItem }}" style="height:300px; width: 100%"></div>
+                                                {% endif %}
+					</div>
+				    </div>
+                                    
+                                    {% for impression in wax.impressions %}
+
+                                        <div class="panel-group">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse2-{{ waxIndex~'-'~loop.index }}">Impression {{ loop.index }}</a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse2-{{ waxIndex~'-'~loop.index }}" class="panel-collapse collapse in">
+                                                    <div class="panel-body">
+
+                                                        <div class="col-md-6">
+
+							    <h4>{{ impression }}</h4>
+
+                                                            <table class="table table-bordered">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Design Description</th>
+                                                                        <td class="col-md-8">{{ impression.analysisdesign }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Vertical Size (mm)</th>
+                                                                        <td class="col-md-8">{{ impression.descrbimpressionheight }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Horizontal Size (mm)</th>
+                                                                        <td class="col-md-8">{{ impression.descrbimpressionwidth }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Shape</th>
+                                                                        <td class="col-md-8">{{ impression.foreignkeyshape }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Keywords</th>
+                                                                        <td class="col-md-8">{{ impression.tags|join(', ') }}</td>
+                                                                    </tr>
+								    <tr>
+									<th class="col-md-4">Has Matching Impressions?</th>
+									<td class="col-md-8">{{ impression.matchingimpressions ? 'yes' : 'no' }}</td>
+								    </tr>
+
+                                                                    {% if impression.foreignkeyseal is not null %}
+                                                                        <tr>
+                                                                            <th class="col-md-4">Made with Matrix</th>
+                                                                            <td class="col-md-8">
+                                                                                <a href="{{ path('show_matrix', {id: impression.foreignkeyseal.iduniqueseal}) }}">{{ impression.foreignkeyseal }}</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                </tbody>
+                                                            </table>
+
+                                                            <h4>Legend</h4>
+
+                                                            <table class="table table-bordered">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Status</th>
+                                                                        <td class="col-md-8">{{ impression.foreignkeylegendstatus }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Transcription</th>
+                                                                        <td class="col-md-8">{{ impression.descrblegend }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Comment</th>
+                                                                        <td class="col-md-8">{{ impression.descrblegendcomment }}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+
+                                                            <h4>Features and Quality</h4>
+
+                                                            <table class="table table-bordered">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th class="col-md-4">Condition</th>
+                                                                        <td class="col-md-8">{{ impression.foreignkeycondition }}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            {% if document.FOREIGNKEYReference is defined %}
+                                                                <div id="toolbarDiv-impression-{{ impression.iduniquesealimpression }}" class="toolbar" style="padding-bottom: 40px"></div>
+                                                                <div class="openseadragon-impression" id="openseadragon-impression-{{ impression.iduniquesealimpression }}" data-size="large" data-type="impression" data-position="{{ wax.positiononitem }}" data-id="{{ impression.iduniquesealimpression }}" data-reference="{{ document.FOREIGNKEYReference.describfulltext }}" data-accession="{{ document.CATREFItem }}" style="height:300px; width: 100%"></div>
+                                                            {% endif %}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+
+                {% endfor %}
+
+		#}
+
+        	</div><!-- /.col-md-12 -->
+        
+        </div>
+    </div>
+
+{% endblock %}

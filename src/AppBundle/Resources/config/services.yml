@@ -1,0 +1,103 @@
+services:
+
+    app.admin.song:
+        class: AppBundle\Admin\SongAdmin
+        arguments: [~, AppBundle\Entity\Song, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Song}
+
+    app.admin.poem:
+        class: AppBundle\Admin\PoemAdmin
+        arguments: [~, AppBundle\Entity\Poem, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Poem}
+
+    app.admin.publication:
+        class: AppBundle\Admin\PublicationAdmin
+        arguments: [~, AppBundle\Entity\Publication, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Publication}
+
+    app.admin.recording:
+        class: AppBundle\Admin\RecordingAdmin
+        arguments: [~, AppBundle\Entity\Recording, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Recording}
+
+    app.admin.person:
+        class: AppBundle\Admin\PersonAdmin
+        arguments: [~, AppBundle\Entity\Person, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Person}
+
+    app.admin.publisher:
+        class: AppBundle\Admin\PublisherAdmin
+        arguments: [~, AppBundle\Entity\Publisher, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Publisher}
+
+    app.admin.theme:
+        class: AppBundle\Admin\ThemeAdmin
+        arguments: [~, AppBundle\Entity\Theme, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Theme}
+
+    app.admin.form:
+        class: AppBundle\Admin\FormAdmin
+        arguments: [~, AppBundle\Entity\Form, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Form}
+
+    app.admin.rhyme:
+        class: AppBundle\Admin\RhymeAdmin
+        arguments: [~, AppBundle\Entity\Rhyme, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Rhyme}
+
+    app.admin.tessitura:
+        class: AppBundle\Admin\TessituraAdmin
+        arguments: [~, AppBundle\Entity\Tessitura, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Tessitura}
+
+    app.admin.scoring:
+        class: AppBundle\Admin\ScoringAdmin
+        arguments: [~, AppBundle\Entity\Scoring, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Scoring}
+
+    app.admin.city:
+        class: AppBundle\Admin\CityAdmin
+        arguments: [~, AppBundle\Entity\City, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: City}
+
+    app.admin.country:
+        class: AppBundle\Admin\CountryAdmin
+        arguments: [~, AppBundle\Entity\Country, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Country}
+
+    app.admin.lang:
+        class: AppBundle\Admin\LangAdmin
+        arguments: [~, AppBundle\Entity\Lang, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Language}
+
+    app.admin.metre:
+        class: AppBundle\Admin\MetreAdmin
+        arguments: [~, AppBundle\Entity\Metre, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Metre}
+
+    app.admin.tonality:
+        class: AppBundle\Admin\TonalityAdmin
+        arguments: [~, AppBundle\Entity\Tonality, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Tonality}
+
+    app.admin.repository:
+        class: AppBundle\Admin\RepositoryAdmin
+        arguments: [~, AppBundle\Entity\Repository, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Repository}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	{#
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+	#}
+	<link rel="stylesheet" href="{{ asset('build/app.css') }}">
+    </head>
+    <body>
+
+	    <body>
+
+        <header>
+            <!-- Fixed navbar -->
+            <nav class="navbar navbar-inverse">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/imprint/">
+				<!-- <img src="/imprint/images/logo_horiz_dark.svg" /> -->
+                        </a>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="{{ path('homepage') }}">Home</a></li>
+                            <li><a href="{{ path('songs') }}">Songs</a></li>
+                            <li><a href="{{ path('search') }}">Search</a></li>
+
+			    <!--<li><a href="/imprint/Main_Page">About the Project</a></li>-->
+
+			    <li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About the Project <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="{{ path('wiki', {slug: "About_the_Project"}) }}">Overview</a></li>
+					<li><a href="{{ path('wiki', {slug: "Data_Capture_Methods"}) }}">Data Capture Methods</a></li>
+					<li><a href="{{ path('wiki', {slug: "A_History_of_Sealing"}) }}">A History of Sealing</a></li>
+					<li><a href="{{ path('wiki', {slug: "A_History_of_Fingerprinting"}) }}">A History of Fingerprinting</a></li>
+					<li><a href="{{ path('wiki', {slug: "Case_Studies"}) }}">Case Studies</a></li>
+					<li><a href="{{ path('wiki', {slug: "Project_Team"}) }}">Project Team</a></li>
+					<li><a href="{{ path('wiki', {slug: "Glossary_of_terms_used"}) }}">Glossary</a></li>
+					<li><a href="{{ path('wiki', {slug: "Bibliography"}) }}">Bibliography</a></li>
+				</ul>
+			    </li>
+
+                            <li>
+                                <form class="navbar-form" role="search" action="{{ path('search') }}">
+                                    <div class="input-group">
+                                        <input type="text" name="search[keyword]" class="form-control" placeholder="Quick Search ..." name="q">
+                                        <div class="input-group-btn">
+						<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </li>
+                        </ul>
+			<!--
+                        <ul class="nav navbar-nav pull-right">
+                            <li>
+                                <a class="navbar-brand" href="/imprint/">
+                                    <img src="http://placehold.it/180x50" />
+                                </a>
+                            </li>
+                        </ul>
+			-->
+                    </div><!--/.nav-collapse -->
+                </div>
+            </nav>
+        </header>
+
+        {% block body %}{% endblock %}
+
+        <footer class="footer">
+            <div class="container">
+                <p class="text-muted">The Digital Humanities Institute, University of Sheffield, 2018</p>
+            </div>
+        </footer>
+
+	{#
+        {% block body %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+	#}
+	<!-- Font Awesome JS -->
+	<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+
+	<script src="{{ asset('build/app.js') }}"></script>
+    </body>
+</html>
